@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id              String     @id @default(cuid())
+  name            String
+  ownerName       String?    @map("owner_name")
+  whatsappNumber  String     @unique @map("whatsapp_number")
+  category        String?
+  botNumber       String?    @map("bot_number")
+  plan            String     @default("free") // free | starter | pro
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  customers       Customer[]
+
+  @@map("businesses")
+}
+
+model Customer {
+  id           String        @id @default(cuid())
+  businessId   String        @map("business_id")
+  name         String
+  phone        String?
+  need         String?
+  budget       Float?
+  stage        String        @default("new") // new | interested | negotiating | won | lost
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  business     Business      @relation(fields: [businessId], references: [id])
+  interactions Interaction[]
+  reminders    Reminder[]
+  payments     Payment[]
+
+  @@map("customers")
+}
+
+model Interaction {
+  id              String   @id @default(cuid())
+  customerId      String   @map("customer_id")
+  notes           String
+  interactionDate DateTime @default(now()) @map("interaction_date")
+  outcome         String?
+  customer        Customer @relation(fields: [customerId], references: [id])
+
+  @@map("interactions")
+}
+
+model Reminder {
+  id         String   @id @default(cuid())
+  customerId String   @map("customer_id")
+  dueDate    DateTime @map("due_date")
+  status     String   @default("pending") // pending | sent | done | snoozed
+  message    String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  @@map("reminders")
+}
+
+model Payment {
+  id         String    @id @default(cuid())
+  customerId String    @map("customer_id")
+  amount     Float
+  status     String    @default("pending") // pending | paid
+  dueDate    DateTime? @map("due_date")
+  notes      String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  customer   Customer  @relation(fields: [customerId], references: [id])
+
+  @@map("payments")
+}
