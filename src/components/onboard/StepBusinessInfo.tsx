@@ -103,6 +103,7 @@ export default function StepBusinessInfo({
             transition: "border-color 0.2s",
             boxSizing: "border-box",
             backgroundColor: "#fafafa",
+            color: "#1a1a1a",
           }}
           onFocus={(e) =>
             (e.target.style.borderColor = "#6366f1")
@@ -148,6 +149,7 @@ export default function StepBusinessInfo({
             transition: "border-color 0.2s",
             boxSizing: "border-box",
             backgroundColor: "#fafafa",
+            color: "#1a1a1a",
           }}
           onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
           onBlur={(e) => (e.target.style.borderColor = "#e5e7eb")}
@@ -200,6 +202,7 @@ export default function StepBusinessInfo({
               transition: "border-color 0.2s",
               boxSizing: "border-box",
               backgroundColor: "#fafafa",
+              color: "#1a1a1a",
             }}
             onFocus={(e) => (e.target.style.borderColor = "#6366f1")}
             onBlur={(e) =>
@@ -243,6 +246,7 @@ export default function StepBusinessInfo({
             cursor: "pointer",
             boxSizing: "border-box",
             appearance: "none",
+            color: "#1a1a1a",
           }}
         >
           {CATEGORIES.map((cat) => (

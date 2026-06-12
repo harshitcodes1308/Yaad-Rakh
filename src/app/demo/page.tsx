@@ -43,7 +43,13 @@ export default async function DemoPage() {
                     <div style={styles.businessPhone}>
                       {b.whatsappNumber}
                     </div>
-                    <div style={styles.badge}>{b.plan} plan</div>
+                    <div style={{
+                      ...styles.badge,
+                      backgroundColor: b.plan === "pro" ? "#1a3c34" : b.plan === "starter" ? "#1e3a8a" : "#e2e8f0",
+                      color: b.plan === "pro" || b.plan === "starter" ? "#ffffff" : "#1a1a1a"
+                    }}>
+                      {b.plan} plan
+                    </div>
                   </div>
                 ))}
               </div>
@@ -126,15 +132,18 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "20px",
     borderRadius: "12px",
     boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    color: "#1a1a1a",
   },
   sidebarTitle: {
     margin: "0 0 8px 0",
     fontSize: "16px",
+    fontWeight: "bold",
+    color: "#1a1a1a",
   },
   sidebarDesc: {
     margin: "0 0 16px 0",
     fontSize: "14px",
-    color: "#666",
+    color: "#4a5568",
     lineHeight: "1.4",
   },
   businessList: {
@@ -146,27 +155,27 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "12px",
     border: "1px solid #eaeaea",
     borderRadius: "8px",
-    backgroundColor: "#f9f9f9",
-    borderLeft: "4px solid #075e54",
+    backgroundColor: "#ffffff",
+    borderLeft: "4px solid #0f766e",
   },
   businessName: {
     fontWeight: "bold",
     fontSize: "14px",
     marginBottom: "4px",
+    color: "#1a1a1a",
   },
   businessPhone: {
     fontSize: "13px",
-    color: "#666",
+    color: "#4a5568",
     marginBottom: "8px",
   },
   badge: {
     display: "inline-block",
     fontSize: "11px",
-    backgroundColor: "#e0e0e0",
     padding: "2px 8px",
     borderRadius: "12px",
     textTransform: "capitalize",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   simulatorWrapper: {
     display: "flex",
