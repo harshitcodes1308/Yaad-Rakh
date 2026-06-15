@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { parseLeadMessage, classifyAndParseMessage } from "@/lib/openai";
-import { sendTextMessage, sendInteractiveMessage } from "@/lib/whatsapp";
+import { sendTextMessage, sendInteractiveMessage, addMockIncomingLog } from "@/lib/whatsapp";
 import { WhatsAppWebhookPayload } from "@/types/types";
 
 /**
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       console.log(`[Webhook] Unknown sender: ${senderPhone}`);
       await sendTextMessage(
         senderPhone,
-        "Yaad Rakh mein aapka account nahi mila. Pehle onboarding karwayein apne Devnddez team se! 🙏"
+        "Yaad Rakh mein aapka account nahi mila. Pehle onboarding portal par register karwayein! 🙏"
       );
       return NextResponse.json({ status: "unknown_sender" });
     }
@@ -155,6 +155,16 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[Webhook] Processed Intent: ${intent}`, parsedData);
+
+    // Log incoming webhook event for simulator
+    addMockIncomingLog({
+      id: `incoming_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+      from: senderPhone,
+      content: messageBody,
+      intent,
+      parsedData,
+      timestamp: new Date().toISOString(),
+    });
 
     let replyMessage = "";
 
@@ -779,30 +789,214 @@ export async function POST(request: NextRequest) {
 
       case "BULK_MESSAGE": {
         if (business.plan !== "pro") {
-          replyMessage = "❌ Tyohar Bulk Message Sender sirf Pro plan members ke liye hai. Upgrade karne ke liye Devnddez support ko message karein! 💎";
+          replyMessage = "❌ Tyohar Bulk Message Sender sirf Pro plan members ke liye hai. Upgrade karne ke liye support ko message karein! 💎";
           break;
         }
 
-        const { query } = parsedData;
-        const festivalName = query || "Tyohar";
+        const { query, targetStage, messageType, messageText } = parsedData;
+
+        // Filter by stage if targetStage is provided and not "all"
+        const whereClause: any = { businessId: business.id };
+        if (targetStage && targetStage !== "all") {
+          whereClause.stage = targetStage;
+        }
 
         const customers = await prisma.customer.findMany({
-          where: { businessId: business.id },
+          where: whereClause,
         });
 
         if (customers.length === 0) {
-          replyMessage = "Aapke paas koi customers nahi hain jinhe bulk message bheja ja sake.";
+          replyMessage = `Aapke paas koi customers nahi hain ${targetStage && targetStage !== "all" ? `stage "${targetStage}" mein ` : ""}jinhe bulk message bheja ja sake.`;
           break;
         }
 
         let successCount = 0;
+        const msgType = messageType || "festival";
+        const msgContent = messageText || query || "Tyohar";
+
         for (const cust of customers) {
-          const greeting = `Happy ${festivalName} ${cust.name} ji! ${business.name} ki taraf se shubhkamnayein! Naya collection aa gaya hai — zaroor aayein!`;
+          let greeting = "";
+          if (msgType === "festival") {
+            greeting = `Happy ${msgContent} ${cust.name} ji! ${business.name} ki taraf se shubhkamnayein! Naya collection aa gaya hai — zaroor aayein!`;
+          } else if (msgType === "announcement") {
+            greeting = `📢 *Announcement from ${business.name}:* Hello ${cust.name} ji, ${msgContent}!`;
+          } else {
+            // custom message with [name] replacement
+            greeting = msgContent.replace(/\[name\]/gi, cust.name).replace(/\[customerName\]/gi, cust.name);
+          }
+
           await sendTextMessage(cust.phone || "919999999999", greeting);
           successCount++;
         }
 
-        replyMessage = `🚀 Bulk greetings for ${festivalName} sent successfully to all ${successCount} customers!`;
+        replyMessage = `🚀 Bulk message (${msgType}) successfully sent to ${successCount} customers ${targetStage && targetStage !== "all" ? `in stage "${targetStage}"` : "in total"}!`;
+        break;
+      }
+
+      case "CREATE_INVOICE": {
+        const { customerName, amount, item } = parsedData;
+
+        if (!customerName || !amount) {
+          replyMessage = "Mujhe invoice details clear nahi mili. Example: 'Rahul digital bill of 1500 for tshirts'.";
+          break;
+        }
+
+        let customer = await prisma.customer.findFirst({
+          where: {
+            businessId: business.id,
+            name: { contains: customerName },
+          },
+        });
+
+        if (!customer) {
+          customer = await prisma.customer.create({
+            data: {
+              businessId: business.id,
+              name: customerName,
+              stage: "interested",
+            },
+          });
+        }
+
+        const payment = await prisma.payment.create({
+          data: {
+            customerId: customer.id,
+            amount: Number(amount),
+            status: "pending",
+            type: "udhari",
+            notes: `Digital Bill: ${item || "Items"}`,
+          },
+        });
+
+        await prisma.interaction.create({
+          data: {
+            customerId: customer.id,
+            notes: `Digital Bill Generated for ${item || "Items"} of amount ₹${amount}`,
+            outcome: "invoice_generated",
+          },
+        });
+
+        const invoiceId = payment.id;
+        const mockBillLink = `https://yaad-rakh.com/bill/${invoiceId}`;
+        replyMessage = `📄 *Digital Bill / Invoice Generated*
+👤 *Customer:* ${customer.name}
+📦 *Item:* ${item || "General Purchase"}
+💰 *Amount:* ₹${Number(amount).toLocaleString("en-IN")}
+Status: *PENDING*
+
+🔗 *View Invoice / Pay Online:* ${mockBillLink}
+
+We have simulated sending this bill to ${customer.name} over WhatsApp! 🚀`;
+        break;
+      }
+
+      case "LOG_ATTENDANCE": {
+        const { staffName, type } = parsedData;
+        const actionType = type || "login";
+        const nameToUse = `Staff: ${staffName || "General Staff"}`;
+
+        let customer = await prisma.customer.findFirst({
+          where: {
+            businessId: business.id,
+            name: nameToUse,
+          },
+        });
+
+        if (!customer) {
+          customer = await prisma.customer.create({
+            data: {
+              businessId: business.id,
+              name: nameToUse,
+              stage: "new",
+            },
+          });
+        }
+
+        await prisma.interaction.create({
+          data: {
+            customerId: customer.id,
+            notes: `Staff punch ${actionType} logged.`,
+            outcome: `attendance_${actionType}`,
+          },
+        });
+
+        const timeStr = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+        replyMessage = `⏰ *Staff Attendance Logged*
+👤 *Staff Member:* ${staffName || "General Staff"}
+🔔 *Action:* Punch-${actionType.toUpperCase()}
+🕒 *Time:* ${timeStr}
+
+Daily attendance records updated successfully!`;
+        break;
+      }
+
+      case "BUSINESS_STATS": {
+        const totalCusts = await prisma.customer.count({
+          where: { businessId: business.id },
+        });
+
+        const stageCounts = await prisma.customer.groupBy({
+          by: ["stage"],
+          where: { businessId: business.id },
+          _count: { id: true },
+        });
+
+        const pendingPayments = await prisma.payment.findMany({
+          where: {
+            customer: { businessId: business.id },
+            status: "pending",
+          },
+        });
+        const totalOwed = pendingPayments.reduce((sum, p) => sum + p.amount, 0);
+
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const staffLogs = await prisma.interaction.findMany({
+          where: {
+            customer: { businessId: business.id },
+            outcome: { startsWith: "attendance_" },
+            interactionDate: { gte: todayStart },
+          },
+          include: { customer: true },
+          orderBy: { interactionDate: "desc" },
+        });
+
+        const stages = { new: 0, interested: 0, negotiating: 0, won: 0, lost: 0 };
+        stageCounts.forEach((s) => {
+          if (s.stage in stages) {
+            (stages as any)[s.stage] = s._count.id;
+          }
+        });
+
+        const attendanceList = staffLogs.length === 0
+          ? "No login/logout records logged today."
+          : staffLogs
+              .map((log) => {
+                const staff = log.customer.name.replace("Staff: ", "");
+                const action = log.outcome === "attendance_login" ? "In" : "Out";
+                const time = new Date(log.interactionDate).toLocaleTimeString("en-IN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                return `• ${staff}: Punch-${action} at ${time}`;
+              })
+              .join("\n");
+
+        replyMessage = `📊 *Yaad Rakh Business Stats Dashboard*
+🏢 *Business:* ${business.name}
+━━━━━━━━━━━━━━━━━━━
+👥 *Total Contacts:* ${totalCusts}
+  • Won Deals: ${stages.won} 🎉
+  • In Negotiation: ${stages.negotiating}
+  • Interested: ${stages.interested}
+  • New Enquiries: ${stages.new}
+  • Lost: ${stages.lost}
+
+💸 *Outstanding Udhari:* ₹${totalOwed.toLocaleString("en-IN")}
+
+⏰ *Today's Staff Logins:*
+${attendanceList}
+━━━━━━━━━━━━━━━━━━━`;
         break;
       }
 

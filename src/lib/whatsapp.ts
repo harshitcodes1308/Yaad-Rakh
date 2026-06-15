@@ -12,15 +12,35 @@ export interface MockLogEntry {
   timestamp: string;
 }
 
+export interface MockIncomingLogEntry {
+  id: string;
+  from: string;
+  content: string;
+  intent: string;
+  parsedData: any;
+  outcome?: string;
+  timestamp: string;
+}
+
 // In-memory store for local testing (Simulator)
 const mockLogs: MockLogEntry[] = [];
+const mockIncomingLogs: MockIncomingLogEntry[] = [];
 
 export function getMockLogs() {
   return mockLogs;
 }
 
+export function getMockIncomingLogs() {
+  return mockIncomingLogs;
+}
+
+export function addMockIncomingLog(log: MockIncomingLogEntry) {
+  mockIncomingLogs.push(log);
+}
+
 export function clearMockLogs() {
   mockLogs.length = 0;
+  mockIncomingLogs.length = 0;
 }
 
 function isMockMode() {

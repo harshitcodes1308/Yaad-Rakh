@@ -117,7 +117,7 @@ export default function OnboardPage() {
               fontWeight: 500,
             }}
           >
-            Client Onboarding — Devnddez Internal
+            Client Onboarding Portal
           </p>
         </div>
 
@@ -237,7 +237,7 @@ export default function OnboardPage() {
             fontWeight: 500,
           }}
         >
-          Yaad Rakh CRM by Devnddez • Internal Tool
+          Yaad Rakh CRM • Internal Tool
         </p>
       </div>
     </div>

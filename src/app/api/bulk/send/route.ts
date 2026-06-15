@@ -10,7 +10,7 @@ import { sendTextMessage } from "@/lib/whatsapp";
  */
 export async function POST(request: NextRequest) {
   try {
-    const { businessId, festival } = await request.json();
+    const { businessId, festival, targetStage } = await request.json();
 
     if (!businessId || !festival) {
       return NextResponse.json(
@@ -38,16 +38,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch all customers for this business
+    // Fetch customers for this business, optionally filtered by stage
+    const whereClause: any = { businessId };
+    if (targetStage && targetStage !== "all") {
+      whereClause.stage = targetStage;
+    }
+
     const customers = await prisma.customer.findMany({
-      where: { businessId },
+      where: whereClause,
     });
 
     if (customers.length === 0) {
       return NextResponse.json({
         success: true,
         sentCount: 0,
-        message: "No customers found to broadcast messages to.",
+        message: "No matching customers found to broadcast messages to.",
       });
     }
 

@@ -50,13 +50,26 @@ Analyze the message and classify it into one of these intents:
    - Example: "Aryan ka kitna baaki hai" -> customerName: "Aryan"
 6. DEAL_PIPELINE_REPLY: If the message is a deal pipeline status option (often a number 1-4 or terms like "Deal pakka", "Soch raha hai", "Nahi chahiye", "Baad mein").
    - Example: "1", "2", "Deal pakka", "Baad mein"
-7. BULK_MESSAGE: If the owner wants to broadcast festival greetings or custom messages.
-   - Example: "Diwali wish bhejo sabko", "Sirf jo 3 mahine mein aaye unhe bhejo"
+7. BULK_MESSAGE: If the owner wants to broadcast festival greetings, new item/shop updates, or custom personalized messages.
+   - Example: "Diwali wish bhejo sabko" -> messageType: "festival", messageText: "Diwali", targetStage: "all"
+   - Example: "won leads ko Happy Diwali greeting send karo" -> messageType: "festival", messageText: "Diwali", targetStage: "won"
+   - Example: "shop new item launch message to interested leads" -> messageType: "announcement", messageText: "new item launch", targetStage: "interested"
+   - Example: "custom message: hey [name] happy diwali to all" -> messageType: "custom", messageText: "hey [name] happy diwali", targetStage: "all"
 8. REMINDER_ACTION: If the owner replies to a reminder notification (e.g. "Done", "Baad mein", "3 din aur" in direct response).
    - Example: "Done"
+9. CREATE_INVOICE: If the owner wants to generate a digital bill/invoice for a customer.
+   - Example: "Rahul digital bill of 1500 for tshirts" -> customerName: "Rahul", amount: 1500, item: "tshirts"
+   - Example: "invoice of 12000 for Amit for website design" -> customerName: "Amit", amount: 12000, item: "website design"
+10. LOG_ATTENDANCE: If the owner wants to log daily staff logins or logouts.
+    - Example: "Ramesh staff login" -> staffName: "Ramesh", type: "login"
+    - Example: "punch out Ramesh" -> staffName: "Ramesh", type: "logout"
+    - Example: "staff punch in" -> staffName: null, type: "login"
+11. BUSINESS_STATS: If the owner wants to view business stats/dashboard reports.
+    - Example: "business stats show karo" -> range: null
+    - Example: "weekly report dikhao" -> range: "weekly"
 
 Return valid JSON with these fields:
-- intent (string: "NEW_LEAD" | "SET_REMINDER" | "RECORD_PAYMENT" | "RECORD_UDHARI" | "LIST_UDHARI" | "DEAL_PIPELINE_REPLY" | "BULK_MESSAGE" | "REMINDER_ACTION")
+- intent (string: "NEW_LEAD" | "SET_REMINDER" | "RECORD_PAYMENT" | "RECORD_UDHARI" | "LIST_UDHARI" | "DEAL_PIPELINE_REPLY" | "BULK_MESSAGE" | "REMINDER_ACTION" | "CREATE_INVOICE" | "LOG_ATTENDANCE" | "BUSINESS_STATS")
 - data (object):
   - For NEW_LEAD: { name: string, phone: string | null, need: string | null, budget: number | null, followUpDays: number | null }
   - For SET_REMINDER: { followUpDays: number | null }
@@ -64,8 +77,11 @@ Return valid JSON with these fields:
   - For RECORD_UDHARI: { customerName: string | null, amount: number | null, type: "udhari" | "repayment" | "full_repayment" | "partial_repayment" }
   - For LIST_UDHARI: { customerName: string | null }
   - For DEAL_PIPELINE_REPLY: { option: number | null, text: string | null }
-  - For BULK_MESSAGE: { query: string }
+  - For BULK_MESSAGE: { query: string | null, targetStage: "all" | "new" | "interested" | "negotiating" | "won" | "lost", messageType: "festival" | "announcement" | "custom", messageText: string }
   - For REMINDER_ACTION: { action: "done" | "snooze" | "later", snoozeDays: number | null }
+  - For CREATE_INVOICE: { customerName: string, amount: number, item: string | null }
+  - For LOG_ATTENDANCE: { staffName: string | null, type: "login" | "logout" }
+  - For BUSINESS_STATS: { range: string | null }
 
 Parsing/Conversion Rules:
 - "15k" or "15 hazar" = 15000
@@ -76,12 +92,11 @@ Parsing/Conversion Rules:
 - "2 din" or "2 din baad" = 2 days
 - "1 mahina" = 30 days
 - Phone numbers: Extract ONLY when it is clearly an explicit 10-digit mobile number.
-- CRITICAL: Under no circumstances should credit/repayment amounts (e.g. 200, 500, 15000), single/double/triple digits, or date/time numbers be extracted as the phone number. If there is no clear 10-digit mobile number, set the phone field to null.
 - If a field is not mentioned, set it to null.
 - Always respond with valid JSON only. No markdown, no explanation, no code fences.`;
 
 export interface ClassifiedMessage {
-  intent: "NEW_LEAD" | "SET_REMINDER" | "RECORD_PAYMENT" | "RECORD_UDHARI" | "LIST_UDHARI" | "DEAL_PIPELINE_REPLY" | "BULK_MESSAGE" | "REMINDER_ACTION";
+  intent: "NEW_LEAD" | "SET_REMINDER" | "RECORD_PAYMENT" | "RECORD_UDHARI" | "LIST_UDHARI" | "DEAL_PIPELINE_REPLY" | "BULK_MESSAGE" | "REMINDER_ACTION" | "CREATE_INVOICE" | "LOG_ATTENDANCE" | "BUSINESS_STATS";
   data: {
     name?: string;
     phone?: string | null;
@@ -90,12 +105,19 @@ export interface ClassifiedMessage {
     followUpDays?: number | null;
     customerName?: string | null;
     amount?: number | null;
-    type?: "pending" | "paid" | "udhari" | "repayment" | "full_repayment" | "partial_repayment";
+    type?: "pending" | "paid" | "udhari" | "repayment" | "full_repayment" | "partial_repayment" | "login" | "logout";
     option?: number | null;
     text?: string | null;
-    query?: string;
+    query?: string | null;
     action?: "done" | "snooze" | "later";
     snoozeDays?: number | null;
+    // New fields
+    targetStage?: "all" | "new" | "interested" | "negotiating" | "won" | "lost";
+    messageType?: "festival" | "announcement" | "custom";
+    messageText?: string;
+    item?: string | null;
+    staffName?: string | null;
+    range?: string | null;
   };
 }
 
@@ -128,7 +150,7 @@ export async function classifyAndParseMessage(
   if (parsed.intent === "NEW_LEAD" && parsed.data.budget) {
     parsed.data.budget = Number(parsed.data.budget);
   }
-  if ((parsed.intent === "RECORD_PAYMENT" || parsed.intent === "RECORD_UDHARI") && parsed.data.amount) {
+  if ((parsed.intent === "RECORD_PAYMENT" || parsed.intent === "RECORD_UDHARI" || parsed.intent === "CREATE_INVOICE") && parsed.data.amount) {
     parsed.data.amount = Number(parsed.data.amount);
   }
 

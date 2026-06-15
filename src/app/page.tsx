@@ -19,9 +19,8 @@ export default async function HomePage() {
 
   return (
     <div style={styles.page}>
-      {/* Background blobs for a premium look */}
-      <div style={styles.blob1}></div>
-      <div style={styles.blob2}></div>
+      {/* Background radial highlight */}
+      <div style={styles.bgGlow}></div>
 
       {/* Navigation Header */}
       <header style={styles.header}>
@@ -32,6 +31,7 @@ export default async function HomePage() {
           </div>
           <div style={styles.navLinks}>
             <a href="/onboard" style={styles.navLink}>Onboarding</a>
+            <a href="/parser" style={styles.navLink}>Parser Console</a>
             <a href="/demo" style={styles.navLinkPrimary}>Launch Simulator ➔</a>
           </div>
         </div>
@@ -39,48 +39,60 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section style={styles.heroSection}>
-        <h1 style={styles.heroTitle}>Aapka Digital Munshi</h1>
+        <div style={styles.tagline}>AAPKA DIGITAL MUNSHI</div>
+        <h1 style={styles.heroTitle}>WhatsApp-First CRM for Indian Small Businesses</h1>
         <p style={styles.heroSubtitle}>
-          WhatsApp-First CRM for Indian Small Businesses. No apps to download. No passwords to remember. 
-          Manage leads, follow-ups, and payments entirely over WhatsApp.
+          No apps to download. No passwords to remember. Manage your leads, automated follow-ups, 
+          segmented bulk broadcasts, digital invoices, and staff attendance entirely over WhatsApp.
         </p>
+
+        {/* Action Button Grid */}
+        <div style={styles.heroActions}>
+          <a href="/parser" style={styles.actionBtnSecondary}>
+            Open Live Parser Console
+          </a>
+          <a href="/demo" style={styles.actionBtnPrimary}>
+            Launch Chat Simulator
+          </a>
+        </div>
 
         {/* Quick Stats Grid */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>🏢</div>
             <div style={styles.statNum}>{totalBusinesses}</div>
-            <div style={styles.statLabel}>Onboarded Businesses</div>
+            <div style={styles.statLabel}>Active Businesses</div>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>👥</div>
             <div style={styles.statNum}>{totalLeads}</div>
-            <div style={styles.statLabel}>Total Saved Leads</div>
+            <div style={styles.statLabel}>Saved Leads</div>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>💬</div>
-            <div style={styles.statNum}>Mock Mode</div>
-            <div style={styles.statLabel}>Bot Status</div>
+            <div style={styles.statNum}>GPT-4o-mini</div>
+            <div style={styles.statLabel}>AI Model</div>
           </div>
         </div>
       </section>
 
-      {/* Main Content Layout */}
+      {/* Main Grid Content */}
       <main style={styles.mainContainer}>
         <div style={styles.layoutGrid}>
           
-          {/* Left: Features Grid */}
+          {/* Left Side: Features Grid */}
           <div style={styles.featuresSection}>
-            <h2 style={styles.sectionTitle}>Core Features</h2>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>What Yaad Rakh Can Do</h2>
+              <p style={styles.sectionDesc}>Powerful automated utility features run using natural language prompts.</p>
+            </div>
+            
             <div style={styles.featuresGrid}>
               
               <div style={styles.featureCard}>
                 <div style={styles.featureHeader}>
-                  <span style={styles.featureIcon}>📝</span>
-                  <h3 style={styles.featureTitle}>Lead Save via Natural Language</h3>
+                  <span style={styles.featureIcon}>✍️</span>
+                  <h3 style={styles.featureTitle}>Lead Capture in Hinglish</h3>
                 </div>
                 <p style={styles.featureDesc}>
-                  Type lead details in Hinglish (e.g. <em>"Raj, 98765XXXXX, website banana hai, budget 15k"</em>) and the AI automatically extracts name, phone, need, and budget.
+                  Type lead details informally like <em>"Rahul 9876543210 website banana hai budget 25k"</em> and the AI extracts name, phone, need, and budget automatically.
                 </p>
               </div>
 
@@ -90,37 +102,60 @@ export default async function HomePage() {
                   <h3 style={styles.featureTitle}>Bhool Mat Reminders</h3>
                 </div>
                 <p style={styles.featureDesc}>
-                  Say <em>"2 din baad"</em> or <em>"1 hafta"</em> to schedule follow-ups. The bot automatically pings you when tasks are due with direct WhatsApp chat links.
+                  Say <em>"2 din baad"</em> or <em>"1 hafta baad"</em> to schedule follow-ups. Yaad Rakh automatically prompts you when tasks are due.
                 </p>
               </div>
 
               <div style={styles.featureCard}>
                 <div style={styles.featureHeader}>
                   <span style={styles.featureIcon}>💸</span>
-                  <h3 style={styles.featureTitle}>Payment Balance Tracker</h3>
+                  <h3 style={styles.featureTitle}>Udhari & Debts Tracker</h3>
                 </div>
                 <p style={styles.featureDesc}>
-                  Track who owes you money in real-time. Text <em>"Meena ka 5000 baaki hai"</em> or <em>"Ramesh ne 3000 diya aaj"</em> to log debts and updates.
+                  Track outstanding balances in real-time. Message <em>"Meena ka 5000 baaki hai"</em> or <em>"Ramesh ne 3000 diya"</em> to settle bills.
                 </p>
               </div>
 
               <div style={styles.featureCard}>
                 <div style={styles.featureHeader}>
-                  <span style={styles.featureIcon}>📈</span>
-                  <h3 style={styles.featureTitle}>Kaisa Gaya? Deal Pipeline</h3>
+                  <span style={styles.featureIcon}>🎯</span>
+                  <h3 style={styles.featureTitle}>Target Segmented Broadcasts</h3>
                 </div>
                 <p style={styles.featureDesc}>
-                  One-tap interactive buttons update your pipeline when follow-ups fire. Easily classify customers into won, lost, negotiating, or snoozed.
+                  Send bulk festival wishes or launches to selected stages (e.g. <em>"Happy Diwali wish send to won leads"</em> or <em>"Winter collection launch announcement to all"</em>).
+                </p>
+              </div>
+
+              <div style={styles.featureCard}>
+                <div style={styles.featureHeader}>
+                  <span style={styles.featureIcon}>📄</span>
+                  <h3 style={styles.featureTitle}>Digital Invoices & Bills</h3>
+                </div>
+                <p style={styles.featureDesc}>
+                  Generate digital bills on the fly (e.g. <em>"Rahul digital bill of 3200 for leather shoes"</em>) with mock online payment links.
+                </p>
+              </div>
+
+              <div style={styles.featureCard}>
+                <div style={styles.featureHeader}>
+                  <span style={styles.featureIcon}>⏰</span>
+                  <h3 style={styles.featureTitle}>Staff Operations & Daily Stats</h3>
+                </div>
+                <p style={styles.featureDesc}>
+                  Punch staff login/logout (e.g., <em>"Ramesh staff punch in"</em>) and view complete active business dashboard logs using text requests.
                 </p>
               </div>
 
             </div>
           </div>
 
-          {/* Right: Business Directory */}
+          {/* Right Side: Active Accounts Directory */}
           <div style={styles.directorySection}>
             <div style={styles.directoryHeader}>
-              <h2 style={styles.sectionTitle}>Active Accounts</h2>
+              <div>
+                <h2 style={styles.sectionTitle}>Onboarded Accounts</h2>
+                <p style={{ ...styles.sectionDesc, margin: 0 }}>Registered business profiles</p>
+              </div>
               <a href="/onboard" style={styles.addBtn}>+ Onboard New</a>
             </div>
             
@@ -136,15 +171,16 @@ export default async function HomePage() {
                     <div style={styles.businessInfo}>
                       <div style={styles.businessName}>{b.name}</div>
                       <div style={styles.businessMeta}>
-                        Owner: {b.ownerName || "N/A"} • Category: {b.category || "N/A"}
+                        Owner: {b.ownerName || "N/A"} • {b.category || "General"}
                       </div>
                       <div style={styles.businessPhone}>📞 {b.whatsappNumber}</div>
                     </div>
                     <div style={styles.businessRight}>
                       <span style={{
                         ...styles.planBadge,
-                        backgroundColor: b.plan === "pro" ? "#fef3c7" : b.plan === "starter" ? "#e0e7ff" : "#f3f4f6",
-                        color: b.plan === "pro" ? "#92400e" : b.plan === "starter" ? "#3730a3" : "#374151"
+                        backgroundColor: b.plan === "pro" ? "#f3e8ff" : b.plan === "starter" ? "#e0e7ff" : "#f4f4f5",
+                        color: b.plan === "pro" ? "#6b21a8" : b.plan === "starter" ? "#3730a3" : "#52525b",
+                        border: `1px solid ${b.plan === "pro" ? "#e9d5ff" : b.plan === "starter" ? "#c7d2fe" : "#e4e4e7"}`
                       }}>
                         {b.plan}
                       </span>
@@ -161,7 +197,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer style={styles.footer}>
-        <p>© 2026 Yaad Rakh CRM. Built with ❤️ for Indian Small Businesses by Devnddez.</p>
+        <p>© 2026 Yaad Rakh CRM. Built with ❤️ for Indian Small Businesses.</p>
       </footer>
     </div>
   );
@@ -170,39 +206,30 @@ export default async function HomePage() {
 const styles: Record<string, React.CSSProperties> = {
   page: {
     minHeight: "100vh",
-    backgroundColor: "#faf9ff",
-    color: "#1e1b4b",
-    fontFamily: "'Outfit', 'Inter', -apple-system, sans-serif",
+    backgroundColor: "#ffffff",
+    color: "#09090b",
+    fontFamily: "'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
     position: "relative",
     overflowX: "hidden",
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
-  blob1: {
+  bgGlow: {
     position: "absolute",
-    top: "-10%",
-    left: "-10%",
-    width: "40vw",
-    height: "40vw",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(167,243,208,0.4) 0%, rgba(250,249,255,0) 70%)",
+    top: 0,
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: "100vw",
+    height: "600px",
+    background: "radial-gradient(100% 100% at 50% 0%, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0) 100%)",
     zIndex: 0,
-  },
-  blob2: {
-    position: "absolute",
-    top: "30%",
-    right: "-10%",
-    width: "50vw",
-    height: "50vw",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(224,231,255,0.4) 0%, rgba(250,249,255,0) 70%)",
-    zIndex: 0,
+    pointerEvents: "none",
   },
   header: {
     position: "relative",
     zIndex: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     backdropFilter: "blur(12px)",
-    borderBottom: "1px solid rgba(224,231,255,0.8)",
+    borderBottom: "1px solid #f4f4f5",
     padding: "16px 24px",
   },
   headerContainer: {
@@ -218,167 +245,206 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 8,
   },
   logoEmoji: {
-    fontSize: 28,
+    fontSize: 24,
   },
   logoText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 800,
-    background: "linear-gradient(135deg, #075e54, #4f46e5)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
+    color: "#09090b",
+    letterSpacing: "-0.02em",
   },
   navLinks: {
     display: "flex",
     alignItems: "center",
-    gap: 20,
+    gap: 24,
   },
   navLink: {
-    color: "#4b5563",
+    color: "#71717a",
     textDecoration: "none",
     fontWeight: 600,
-    fontSize: 14,
+    fontSize: 13,
     transition: "color 0.2s",
   },
   navLinkPrimary: {
-    backgroundColor: "#075e54",
-    color: "#fff",
+    backgroundColor: "#09090b",
+    color: "#ffffff",
     padding: "8px 16px",
     borderRadius: 8,
     textDecoration: "none",
     fontWeight: 600,
-    fontSize: 14,
-    boxShadow: "0 4px 6px -1px rgba(7,94,84,0.2)",
-    transition: "all 0.2s",
+    fontSize: 13,
+    transition: "background 0.2s",
   },
   heroSection: {
     position: "relative",
     zIndex: 5,
-    maxWidth: 900,
-    margin: "64px auto 40px",
+    maxWidth: 800,
+    margin: "80px auto 48px",
     textAlign: "center",
-    padding: "0 20px",
+    padding: "0 24px",
+  },
+  tagline: {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: "0.15em",
+    color: "#6366f1",
+    marginBottom: 16,
   },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 44,
     fontWeight: 900,
-    margin: "0 0 16px 0",
-    color: "#0f172a",
-    letterSpacing: "-0.02em",
+    margin: "0 0 18px 0",
+    color: "#09090b",
+    letterSpacing: "-0.03em",
+    lineHeight: "1.15",
   },
   heroSubtitle: {
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: "1.6",
-    color: "#475569",
-    margin: "0 auto 40px",
-    maxWidth: 720,
+    color: "#71717a",
+    margin: "0 auto 36px",
+    maxWidth: 680,
+    fontWeight: 400,
+  },
+  heroActions: {
+    display: "flex",
+    justifyContent: "center",
+    gap: 16,
+    marginBottom: 48,
+  },
+  actionBtnPrimary: {
+    backgroundColor: "#09090b",
+    color: "#ffffff",
+    padding: "12px 24px",
+    borderRadius: 10,
+    textDecoration: "none",
+    fontWeight: 600,
+    fontSize: 14,
+    transition: "all 0.2s",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
+  },
+  actionBtnSecondary: {
+    backgroundColor: "#ffffff",
+    color: "#09090b",
+    border: "1px solid #e4e4e7",
+    padding: "12px 24px",
+    borderRadius: 10,
+    textDecoration: "none",
+    fontWeight: 600,
+    fontSize: 14,
+    transition: "all 0.2s",
   },
   statsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: 24,
-    maxWidth: 800,
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 16,
+    maxWidth: 540,
     margin: "0 auto",
   },
   statCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: "16px",
     textAlign: "center",
-    boxShadow: "0 10px 15px -3px rgba(0,0,0,0.02), 0 4px 6px -4px rgba(0,0,0,0.02)",
-    border: "1px solid rgba(224,231,255,0.5)",
-  },
-  statIcon: {
-    fontSize: 24,
-    marginBottom: 8,
+    border: "1px solid #f4f4f5",
   },
   statNum: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: 800,
-    color: "#075e54",
+    color: "#09090b",
   },
   statLabel: {
-    fontSize: 12,
-    color: "#64748b",
+    fontSize: 11,
+    color: "#a1a1aa",
     fontWeight: 600,
     marginTop: 4,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
   },
   mainContainer: {
     position: "relative",
     zIndex: 5,
     maxWidth: 1200,
     margin: "40px auto",
-    padding: "0 20px",
+    padding: "0 24px",
   },
   layoutGrid: {
     display: "grid",
-    gridTemplateColumns: "1.5fr 1fr",
-    gap: 40,
+    gridTemplateColumns: "1.4fr 1fr",
+    gap: 48,
   },
   featuresSection: {
     display: "flex",
     flexDirection: "column",
   },
+  sectionHeader: {
+    marginBottom: 28,
+  },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 800,
-    color: "#0f172a",
-    marginBottom: 20,
+    color: "#09090b",
+    letterSpacing: "-0.01em",
+  },
+  sectionDesc: {
+    fontSize: 13,
+    color: "#71717a",
+    marginTop: 4,
   },
   featuresGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
     gap: 20,
   },
   featureCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
-    border: "1px solid rgba(224,231,255,0.5)",
-    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)",
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: "20px",
+    border: "1px solid #f4f4f5",
+    transition: "all 0.2s",
   },
   featureHeader: {
     display: "flex",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 12,
+    gap: 10,
+    marginBottom: 10,
   },
   featureIcon: {
-    fontSize: 24,
+    fontSize: 20,
   },
   featureTitle: {
-    fontSize: 15,
-    fontWeight: 800,
-    color: "#1e293b",
+    fontSize: 14,
+    fontWeight: 700,
+    color: "#09090b",
     margin: 0,
   },
   featureDesc: {
-    fontSize: 13,
+    fontSize: 12,
     lineHeight: "1.5",
-    color: "#64748b",
+    color: "#71717a",
     margin: 0,
   },
   directorySection: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 24,
-    border: "1px solid rgba(224,231,255,0.5)",
-    boxShadow: "0 10px 15px -3px rgba(0,0,0,0.04)",
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
+    padding: "24px",
+    border: "1px solid #f4f4f5",
     alignSelf: "start",
   },
   directoryHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 24,
   },
   addBtn: {
-    color: "#075e54",
+    color: "#09090b",
     textDecoration: "none",
     fontWeight: 700,
-    fontSize: 13,
-    border: "1px solid #075e54",
-    padding: "6px 12px",
-    borderRadius: 6,
+    fontSize: 12,
+    border: "1px solid #e4e4e7",
+    padding: "6px 14px",
+    borderRadius: 8,
     transition: "all 0.2s",
   },
   emptyState: {
@@ -386,29 +452,29 @@ const styles: Record<string, React.CSSProperties> = {
     padding: "40px 20px",
   },
   emptyText: {
-    color: "#64748b",
-    fontSize: 14,
+    color: "#71717a",
+    fontSize: 13,
     margin: "0 0 12px 0",
   },
   emptyLink: {
-    color: "#075e54",
+    color: "#6366f1",
     textDecoration: "none",
     fontWeight: 600,
-    fontSize: 14,
+    fontSize: 13,
   },
   businessList: {
     display: "flex",
     flexDirection: "column",
-    gap: 16,
+    gap: 12,
   },
   businessCard: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: "16px",
     borderRadius: 12,
-    border: "1px solid #f1f5f9",
-    backgroundColor: "#fafafb",
+    border: "1px solid #f4f4f5",
+    backgroundColor: "#fafafa",
   },
   businessInfo: {
     display: "flex",
@@ -418,15 +484,15 @@ const styles: Record<string, React.CSSProperties> = {
   businessName: {
     fontWeight: 700,
     fontSize: 14,
-    color: "#0f172a",
+    color: "#09090b",
   },
   businessMeta: {
     fontSize: 11,
-    color: "#64748b",
+    color: "#71717a",
   },
   businessPhone: {
-    fontSize: 12,
-    color: "#075e54",
+    fontSize: 11,
+    color: "#71717a",
     fontWeight: 600,
   },
   businessRight: {
@@ -436,23 +502,22 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 8,
   },
   planBadge: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 700,
     padding: "2px 8px",
-    borderRadius: 10,
+    borderRadius: 6,
     textTransform: "uppercase",
+    letterSpacing: "0.03em",
   },
   customerCount: {
-    fontSize: 12,
-    color: "#64748b",
+    fontSize: 11,
+    color: "#71717a",
     fontWeight: 500,
   },
   footer: {
     textAlign: "center",
-    color: "#94a3b8",
-    fontSize: 12,
+    color: "#a1a1aa",
+    fontSize: 11,
     marginTop: 80,
-    position: "relative",
-    zIndex: 5,
   },
 };
