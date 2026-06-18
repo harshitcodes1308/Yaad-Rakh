@@ -1,9 +1,35 @@
 import OpenAI from "openai";
 import { ParsedLead } from "@/types/types";
+import fs from "fs";
+import path from "path";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "dummy-key-for-build",
-});
+function getOpenAIApiKey() {
+  let key = process.env.OPENAI_API_KEY;
+  if (!key || key.startsWith("sk-ijklm") || key === "dummy-key-for-build") {
+    try {
+      const envPath = path.join(process.cwd(), ".env");
+      if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, "utf8");
+        const lines = envContent.split("\n");
+        for (const line of lines) {
+          const match = line.match(/^\s*OPENAI_API_KEY\s*=\s*(.*)?\s*$/);
+          if (match) {
+            let val = match[1] || "";
+            if (val.startsWith('"') && val.endsWith('"')) {
+              val = val.substring(1, val.length - 1);
+            }
+            if (val && !val.startsWith("sk-ijklm")) {
+              return val;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read key from .env:", e);
+    }
+  }
+  return key || "dummy-key-for-build";
+}
 
 const SYSTEM_PROMPT = `You are a lead data extractor for an Indian CRM called "Yaad Rakh". Extract structured data from informal business messages (often in Hinglish — a mix of Hindi and English).
 
@@ -127,6 +153,7 @@ export interface ClassifiedMessage {
 export async function classifyAndParseMessage(
   message: string
 ): Promise<ClassifiedMessage> {
+  const openai = new OpenAI({ apiKey: getOpenAIApiKey() });
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
@@ -163,6 +190,7 @@ export async function classifyAndParseMessage(
 export async function parseLeadMessage(
   message: string
 ): Promise<ParsedLead> {
+  const openai = new OpenAI({ apiKey: getOpenAIApiKey() });
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
