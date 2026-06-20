@@ -22,9 +22,21 @@ export interface MockIncomingLogEntry {
   timestamp: string;
 }
 
-// In-memory store for local testing (Simulator)
-const mockLogs: MockLogEntry[] = [];
-const mockIncomingLogs: MockIncomingLogEntry[] = [];
+// In-memory store for local testing (Simulator) - bound to globalThis for Next.js hot-reload consistency
+const globalForWhatsapp = globalThis as unknown as {
+  mockLogs?: MockLogEntry[];
+  mockIncomingLogs?: MockIncomingLogEntry[];
+};
+
+if (!globalForWhatsapp.mockLogs) {
+  globalForWhatsapp.mockLogs = [];
+}
+if (!globalForWhatsapp.mockIncomingLogs) {
+  globalForWhatsapp.mockIncomingLogs = [];
+}
+
+const mockLogs = globalForWhatsapp.mockLogs!;
+const mockIncomingLogs = globalForWhatsapp.mockIncomingLogs!;
 
 export function getMockLogs() {
   return mockLogs;

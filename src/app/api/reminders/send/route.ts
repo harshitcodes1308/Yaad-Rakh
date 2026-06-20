@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
       // Send plain text reminder message
       await sendTextMessage(business.whatsappNumber, alertBody);
 
+      // Also send a polite follow-up message directly to the customer so it appears in the mockup
+      const customerFollowUpMsg = `Hello ${customer.name} ji, this is a follow-up from *${business.name}* regarding *${customer.need || "your inquiry"}*. Let us know if you have any questions!`;
+      await sendTextMessage(customer.phone || "919999999999", customerFollowUpMsg);
+
       // 2. Send the interactive "Kaisa gaya?" deal pipeline buttons
       const interactiveBody = `${customer.name} se baat hui? Kaisa gaya?`;
       const buttons = [

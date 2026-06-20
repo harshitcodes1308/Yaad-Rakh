@@ -88,7 +88,7 @@ export default function ParserConsoleClient({
   const [lastOutcome, setLastOutcome] = useState<string>("");
 
   const consoleBottomRef = useRef<HTMLDivElement>(null);
-  const customerChatBottomRef = useRef<HTMLDivElement>(null);
+  const waMessageListRef = useRef<HTMLDivElement>(null);
 
   // Map of customer-received messages grouped by businessId
   const [customerMessages, setCustomerMessages] = useState<Record<string, CustomerMessage[]>>({});
@@ -241,7 +241,12 @@ export default function ParserConsoleClient({
     const chatChanged = activeCustomerChatBusinessId !== lastChatIdRef.current;
 
     if (chatChanged || currentCount > prevMsgCountRef.current) {
-      customerChatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      if (waMessageListRef.current) {
+        waMessageListRef.current.scrollTo({
+          top: waMessageListRef.current.scrollHeight,
+          behavior: chatChanged ? "auto" : "smooth"
+        });
+      }
     }
 
     lastChatIdRef.current = activeCustomerChatBusinessId;
@@ -697,7 +702,7 @@ export default function ParserConsoleClient({
                         </div>
 
                         {/* Messages Stream list */}
-                        <div style={styles.waMessageList}>
+                        <div ref={waMessageListRef} style={styles.waMessageList}>
                           {activeChatMessages.map((msg) => {
                             const isBusiness = msg.sender === "business";
                             return (
@@ -735,7 +740,6 @@ export default function ParserConsoleClient({
                               </div>
                             );
                           })}
-                          <div ref={customerChatBottomRef} />
                         </div>
 
                         {/* Fake WhatsApp Input */}

@@ -78,6 +78,9 @@ async function processUdhariReminders() {
     // 4. Send message to the business owner
     await sendTextMessage(business.whatsappNumber, ownerMessageBody);
 
+    // Also send the actual polite reminder directly to the customer's phone so it appears in the mockup
+    await sendTextMessage(customer.phone || "919999999999", politeMessage);
+
     // 5. Update interaction log
     await prisma.interaction.create({
       data: {

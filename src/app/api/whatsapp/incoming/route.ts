@@ -878,6 +878,11 @@ export async function POST(request: NextRequest) {
 
         const invoiceId = payment.id;
         const mockBillLink = `https://yaad-rakh.com/bill/${invoiceId}`;
+        
+        // Also send the actual invoice to the customer's phone so it appears on the receiver console
+        const customerInvoiceMsg = `Hello ${customer.name} ji, aapka *${item || "General Purchase"}* ka bill generate ho gaya hai: *₹${Number(amount).toLocaleString("en-IN")}*.\nStatus: *PENDING*\n\n🔗 *Pay Online:* ${mockBillLink}\n\nThanks for shopping with *${business.name}*!`;
+        await sendTextMessage(customer.phone || "919999999999", customerInvoiceMsg);
+
         replyMessage = `📄 *Digital Bill / Invoice Generated*
 👤 *Customer:* ${customer.name}
 📦 *Item:* ${item || "General Purchase"}
