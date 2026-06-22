@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseLeadMessage } from "@/lib/openai";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/leads/parse
  * Standalone GPT lead parsing endpoint (for testing / admin use).

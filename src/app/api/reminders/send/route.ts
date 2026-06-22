@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendTextMessage, sendInteractiveMessage } from "@/lib/whatsapp";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/reminders/send
  * Cron job endpoint. Finds all pending due reminders, sends WhatsApp alerts

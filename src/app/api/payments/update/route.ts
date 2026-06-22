@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { classifyAndParseMessage } from "@/lib/openai";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/payments/update
  * Standalone endpoint to parse and record a payment transaction.

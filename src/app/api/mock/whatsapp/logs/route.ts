@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMockLogs, getMockIncomingLogs, clearMockLogs } from "@/lib/whatsapp";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/mock/whatsapp/logs
  * Fetches the in-memory mock logs of outgoing messages sent by the bot.

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/mock/whatsapp/send
  * Simulates an incoming message from a customer to the bot.

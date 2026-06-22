@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendTextMessage } from "@/lib/whatsapp";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/digest/morning
  * Daily cron job (runs at 9 AM).

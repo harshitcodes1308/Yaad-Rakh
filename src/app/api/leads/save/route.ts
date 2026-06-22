@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/leads/save
  * Saves a parsed lead to the database and optionally creates a reminder.

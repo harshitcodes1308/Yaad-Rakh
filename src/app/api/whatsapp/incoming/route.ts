@@ -4,6 +4,8 @@ import { parseLeadMessage, classifyAndParseMessage } from "@/lib/openai";
 import { sendTextMessage, sendInteractiveMessage, addMockIncomingLog } from "@/lib/whatsapp";
 import { WhatsAppWebhookPayload } from "@/types/types";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/whatsapp/incoming
  * Webhook verification (Meta / 360dialog challenge-response)
