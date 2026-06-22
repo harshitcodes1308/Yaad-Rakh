@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { sendTextMessage } from "@/lib/whatsapp";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/bulk/send
  * Broadcasts a custom festival/promotional greeting to all customers of a business.
